@@ -9,18 +9,21 @@ import path from 'path';
 dotenv.config();
 
 mongoose
-  .connect(process.env.MONGO)
+  .connect(process.env.MONGO, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('Connected to MongoDB!');
   })
   .catch((err) => {
-    console.log(err);
+    console.error('Error connecting to MongoDB:', err);
   });
 
   const __dirname = path.resolve();
 
 const app = express();
-
+app.use(express.static(path.join(__dirname,'/client/dist')));
+app.get('*',(req,res)=>{
+  res.sendFile(path.join(__dirname,'client','dist','index.html'))
+});
 app.use(express.json());
 
 app.use(cookieParser());
